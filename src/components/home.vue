@@ -9,14 +9,8 @@
         <li><i class="el-icon-house menu_icon"></i></li>
         <li><i class="el-icon-house menu_icon"></i></li>
       </ul>
-    </div>
-    <div class="main">
-      <div class="header">
-        <el-input placeholder="请输入内容" v-model="search_mes" clearable class="search_input"></el-input>
-        <el-button type="primary" icon="el-icon-search" class="search_bt"></el-button>
-      </div>
-      <homeContent class="main_content"></homeContent>
-    </div>
+    </div>n
+      <homeContent class="main"></homeContent>
   </div>
 </template>
 
@@ -60,8 +54,8 @@
     width: 95%;
     height: 100%;
     background-color: #F7F8FA;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
   }
   .logo2{
     width: 50%;
@@ -96,31 +90,5 @@
   .menu_line li:hover .menu_icon{
     color: #2A2E31;
   }
-  .header{
-    width: 100%;
-    height: 80px;
-  }
-  .search_input{
-    width: 10%;
-    line-height: 20px;
-    margin-left: 10%;
-    border: none;
-    border-radius: 5px;
-  }
-  .search_input .el-input__inner{
-    line-height: 20px;
-    height: 30px;
-    padding: 0!important;
-    border: none;
-  }
-  .search_bt{
-    width: 30px;
-    height: 30px;
-    padding: 0;
-    box-shadow: rgba(0,81,249,0.2) 5px 5px 10px;
-  }
-  .main_content{
-    width: 100%;
-    height: auto;
-  }
+
 </style>

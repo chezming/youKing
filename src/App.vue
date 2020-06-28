@@ -24,5 +24,6 @@ export default {
   padding: 0;
   border: 0;
   box-sizing: border-box;
+  list-style: none;
 }
 </style>
