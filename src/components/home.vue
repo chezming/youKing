@@ -3,7 +3,7 @@
     <div class="menu">
       <img class="logo2" src="../assets/logo2.png" alt="">
       <ul class="menu_line">
-        <li><i class="el-icon-house menu_icon"></i></li>
+        <li :class="{active:act_menu === 0}"><i class="el-icon-house menu_icon" :class="{active_icon:act_menu === 0}"></i></li>
         <li><i class="el-icon-folder menu_icon"></i></li>
         <li><i class="el-icon-house menu_icon"></i></li>
         <li><i class="el-icon-house menu_icon"></i></li>
@@ -23,6 +23,7 @@
             return {
                 msg: "Hello Vue.js",
                 search_mes: '',
+                act_menu: 0,
             }
         },
         component: {
@@ -90,5 +91,10 @@
   .menu_line li:hover .menu_icon{
     color: #2A2E31;
   }
-
+  .active{
+    background-color: white!important;
+  }
+  .active_icon{
+    color: #2A2E31;
+  }
 </style>

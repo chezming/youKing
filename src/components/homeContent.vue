@@ -5,7 +5,7 @@
         <el-input placeholder="" v-model="search_mes" clearable class="search_input"></el-input>
         <el-button type="primary" icon="el-icon-search" class="search_bt"></el-button>
         <ul class="header_menu">
-          <li class="header_li">中海石油</li>
+          <li class="header_li" :class="{active_header:header_menu === 0}">中海石油</li>
           <li class="header_li">中海石油</li>
           <li class="header_li">中海石油</li>
           <li class="header_li">中海石油</li>
@@ -42,6 +42,7 @@
             return {
                 msg: "Hello Vue.js",
                 value: new Date(),
+                header_menu: 0,
             }
         },
         component: {
@@ -122,6 +123,9 @@
   .header_li:hover{
     color: #2A2E31;
   }
+  .active_header{
+    color: #2A2E31!important;
+  }
   .header_li::before{
     width: 0px;
     height: 3px;
@@ -132,6 +136,9 @@
     transition: all 0.2s linear;
   }
   .header_li:hover:before{
+    width: 80%;
+  }
+  .active_header:before{
     width: 80%;
   }
   .home_lt{

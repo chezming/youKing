@@ -7,8 +7,41 @@
        <h2>您的私人理财顾问</h2>
        <el-input placeholder="请输入用户名" v-model="username" clearable></el-input>
        <el-input placeholder="请输入密码" v-model="psw" show-password></el-input>
-       <div class="lg_bt"><div class="signup">注册</div><div class="signin" @click="check">登录</div></div>
+       <div class="lg_bt"><div class="signup" @click="signup">注册</div><div class="signin" @click="check">登录</div></div>
       </div>
+     <el-dialog :title="'注册用户'" :visible.sync="dialogVisible" width="30%"  :before-close="handleClose">
+       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+         <el-form-item label="账号" prop="id">
+           <el-input v-model="ruleForm.id"></el-input>
+         </el-form-item>
+         <el-form-item label="姓名" prop="name">
+           <el-input v-model="ruleForm.name"></el-input>
+         </el-form-item>
+         <el-form-item label="性别" prop="sex">
+           <el-radio-group v-model="ruleForm.sex">
+             <el-radio label="男"></el-radio>
+             <el-radio label="女"></el-radio>
+           </el-radio-group>
+         </el-form-item>
+         <el-form-item label="年龄" prop="age">
+           <el-input type="text" v-model="ruleForm.age"></el-input>
+         </el-form-item>
+         <el-form-item label="密码" prop="psw">
+           <el-input type="password" v-model="ruleForm.psw" minlength="10"></el-input>
+         </el-form-item>
+         <el-form-item label="确认密码" prop="psw2">
+           <el-input type="password" v-model="ruleForm.psw2"></el-input>
+         </el-form-item>
+         <el-form-item>
+           <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+           <el-button @click="resetForm('ruleForm')">重置</el-button>
+           <el-button @click="cancellForm('ruleForm')">取 消</el-button>
+         </el-form-item>
+       </el-form>
+       <span slot="footer" class="dialog-footer">
+<!--    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+      </span>
+     </el-dialog>
    </div>
 </template>
 
@@ -19,6 +52,47 @@ export default {
       return {
           username: '',
           psw: '',
+          dialogVisible: false,
+          ruleForm:{
+              id: '',
+              sex: '',
+              name: '',
+              age: null,
+              psw: '',
+              psw2: '',
+          },
+          rules: {
+              id: [
+                  {required: true, message: '请输入账号', trigger: 'blur'},
+                  {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+              ],
+              age: [
+                  {required: true, message: '请输入年龄', trigger: 'blur'}
+              ],
+              name: [
+                  {required: true, message: '请输入姓名', trigger: 'blur'}
+              ],
+              sex: [
+                  {required: true, message: '请选择性别', trigger: 'change'}
+              ],
+              psw: [
+                  {required: true, message: '密码', trigger: 'blur'}
+              ],
+              psw2: [
+                  {required: true, message: '密码不符', trigger: 'blur'}, {
+                      validator: (rule, value, callback) => {
+                          if (value === '') {
+                              callback(new Error('请再次输入密码'))
+                          } else if (value !== this.ruleForm.psw) {
+                              callback(new Error('两次输入密码不一致'))
+                          } else {
+                              callback()
+                          }
+                      }
+                  }
+              ],
+
+          },
       };
    },
 
@@ -35,6 +109,16 @@ export default {
        },
        check(){
            this.$router.push({path:'/home'})
+       },
+       signup(){
+           this.dialogVisible = true;
+       },
+       resetForm(formName) {
+           this.$refs[formName].resetFields();
+       },
+       cancellForm(formName) {
+           this.$refs[formName].resetFields();
+           this.dialogVisible=false;
        },
    }
 }
