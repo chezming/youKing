@@ -1,5 +1,11 @@
 <template>
     <div class="main_content">
+      <el-dialog class="picSee" title="查看图片" :visible.sync="dialogPic1Visible">
+        <img src="../../static/news_img/Kline.jpg" alt="">
+      </el-dialog>
+      <el-dialog class="picSee" title="查看图片" :visible.sync="dialogPic2Visible">
+        <img src="../../static/news_img/risk_free_rate.png" alt="">
+      </el-dialog>
       <div v-if="isDetail" class="detailMain">
         <div class="backFund" @click="backFund">&lt;返回</div>
         <div class="detail_mes">
@@ -40,7 +46,9 @@
                     <div id="detailChart2" :style="{width: '90%', height: '90%'}"></div>
                   </div>
                 </div>
-                <div class="center_bottom"></div>
+                <div class="center_bottom">
+                  <img src="../../static/news_img/risk_free_rate.png" alt="" @click="dialogPic2Visible = true">
+                </div>
               </div>
             </div>
           </div>
@@ -69,7 +77,10 @@
                 <div class="detail_dt">{{DetailFund.existtime}}</div>
               </div>
             </div>
-            <div class="stock_block"></div>
+            <div class="stock_block">
+              <div class="chartname">HS300走势图</div>
+              <img src="../../static/news_img/Kline.jpg" alt="" @click="dialogPic1Visible = true">
+            </div>
           </div>
         </div>
       </div>
@@ -77,14 +88,15 @@
         <div class="news_div">
           <div class="news_list_title">自选基金</div>
           <ul class="fund_ul">
-            <div class="fund_contain fd_con1" v-for="(item,i) in conFund" @click="getFundDetail(item)">
+            <div class="fund_contain fd_con1" v-for="(item,i) in conFund">
               <div class="fund_mes">
                 <div class="fund_code">{{item.code}}</div>
                 <div class="fund_name">{{item.name}}</div>
                 <div class="fund_advisor">{{item.advisor}}</div>
                 <div class="fund_type">{{item.underlyingAssetType}}</div>
 <!--                <div class="collect_button">+&nbsp;收藏</div>-->
-                <div class="cancell_button">取消收藏</div>
+                <div class="cancell_button" @click="cancellCollect(item.code)">取消收藏</div>
+                <div class="detail_button" @click="getFundDetail(item)">详细内容</div>
               </div>
             </div>
           </ul>
@@ -94,26 +106,28 @@
         <div class="news_main">
           <div class="news_main_title"><p class="t1">推荐基金</p><p class="t2">Recommend</p><div style="clear: both"></div></div>
           <div class="fund_recom">
-            <div class="fund_contain fd_con3" v-for="(item,i) in RsFund" @click="getFundDetail(item)">
+            <div class="fund_contain fd_con3" v-for="(item,i) in RsFund">
               <div class="fund_mes">
                 <div class="fund_code">{{item.code}}</div>
                 <div class="fund_name">{{item.name}}</div>
                 <div class="fund_advisor">{{item.advisor}}</div>
                 <div class="fund_type">{{item.underlyingAssetType}}</div>
-                <div class="collect_button">+&nbsp;收藏</div>
+                <div class="collect_button" @click="collectFund(item.code)">+&nbsp;收藏</div>
+                <div class="detail_button" @click="getFundDetail(item)">详细内容</div>
 <!--                <div class="cancell_button">取消收藏</div>-->
               </div>
             </div>
           </div>
           <div class="news_main_title"><p class="t1">全部基金</p><p class="t2">All</p><div style="clear: both"></div></div>
           <div class="fund_recom2">
-            <div class="fund_contain fd_con3" v-for="(item,i) in allFund" @click="getFundDetail(item)">
+            <div class="fund_contain fd_con3" v-for="(item,i) in allFund">
               <div class="fund_mes">
                 <div class="fund_code">{{item.code}}</div>
                 <div class="fund_name">{{item.name}}</div>
                 <div class="fund_advisor">{{item.advisor}}</div>
                 <div class="fund_type">{{item.underlyingAssetType}}</div>
-                <div class="collect_button">+&nbsp;收藏</div>
+                <div class="collect_button" @click="collectFund(item.code)">+&nbsp;收藏</div>
+                <div class="detail_button" @click="getFundDetail(item)">详细内容</div>
                 <!--                <div class="cancell_button">取消收藏</div>-->
               </div>
             </div>
@@ -154,6 +168,8 @@
                 detail: '',
                 textarea: '',
                 totalValue: '',
+                dialogPic1Visible: false,
+                dialogPic2Visible: false,
                 stylePie:
                     [{
                         name: '985院校',
@@ -204,6 +220,11 @@
                     userId: '',
                     time: ''
                 },
+                collectMes:{
+                    fundid: '',
+                    investorid: '',
+                    time: '',
+                }
             }
         },
         components: {
@@ -218,7 +239,7 @@
         },
         methods: {
             getAllFund(){
-                axios.get(this.link+'/fund_basis/findAll').then(res=>{
+                axios.get(this.link+'/fund_basis/findAll/'+this.userid).then(res=>{
                     this.allFund = res.data;
                     console.log(res);
                 })
@@ -233,6 +254,25 @@
                     console.log(res);
                 })
             },
+            collectFund(code){
+                this.collectMes.fundid = code;
+                this.collectMes.investorid = this.userid;
+                this.collectMes.time = new Date();
+                axios.post(this.link+'/inv_collect_fund/save',this.collectMes).then(res=>{
+                    // this.conFund = res.data;
+                    console.log(res);
+                    this.getAllFund();
+                    this.getRsFund();
+                })
+            },
+            cancellCollect(code){
+                axios.delete(this.link+'/inv_collect_fund/delete/'+code+'/'+this.userid).then(res=>{
+                    // this.conFund = res.data;
+                    console.log(res);
+                    this.getAllFund();
+                    this.getRsFund();
+                })
+            },
             getFundDetail(item){
                 this.isDetail = true;
                 this.detail = item;
@@ -241,7 +281,7 @@
                     console.log(res);
                     this.drawLeft(item.code);
                     this.drawCenter(item.code);
-                    this.getComment('000004')
+                    this.getComment(item.code);
                 })
             },
             subComment(){
@@ -484,40 +524,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     overflow-y: scroll;
-  }
-  .fund_ul::-webkit-scrollbar{
-    width:6px;
-    height:10px;
-    /**/
-  }
-  .fund_ul::-webkit-scrollbar-track{
-    background: rgb(239, 239, 239);
-    border-radius:2px;
-  }
-  .fund_ul::-webkit-scrollbar-thumb{
-    background: #6D767D!important;
-    border-radius:10px!important;
-  }
-  .fund_ul::-webkit-scrollbar-thumb:hover{
-    background: #333;
-  }
-  .fund_ul::-webkit-scrollbar-corner{
-    background: #179a16;
   }
   .fund_contain{
     width: 200px;
     border-radius: 15px;
     border: #a1a8ad solid 1px;
-    cursor: pointer;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   .fd_con1{
-    height: 19%;
+    height: 120px;
+    margin-top: 5px;
   }
   .fd_con2{
     height: 100%;
@@ -556,7 +577,7 @@
     margin-top: 12px;
   }
   .collect_button{
-    width: 36%;
+    width: 30%;
     height: 26px;
     border-radius: 5px;
     background-color: #FF3441;
@@ -567,9 +588,11 @@
     position: absolute;
     bottom: 0px;
     right: 0px;
+    z-index: 100;
+    cursor: pointer;
   }
   .cancell_button{
-    width: 36%;
+    width: 30%;
     height: 26px;
     border-radius: 5px;
     background-color: #a1a8ad;
@@ -580,6 +603,23 @@
     position: absolute;
     bottom: 0px;
     right: 0px;
+    z-index: 100;
+    cursor: pointer;
+  }
+  .detail_button{
+    width: 30%;
+    height: 26px;
+    border-radius: 5px;
+    background-color: #a1a8ad;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 0px;
+    cursor: pointer;
+    right: 32%;
+    z-index: 100;
   }
   .fund_recom{
     width: 100%;
@@ -604,6 +644,12 @@
   }
   .backFund{
     cursor: pointer;
+    font-family: 方正粗黑宋简体;
+    color: #2a2e31;
+    font-size: 18px;
+    position: absolute;
+    top: 5%;
+    left: 6%;
   }
   .detailMain{
     width: 90%;
@@ -769,9 +815,17 @@
     height: 50%;
     background-color: white;
     border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .center_bottom img{
+    width: 80%;
+    height: 90%;
+    cursor: pointer;
   }
   .center_t1{
-    width: 30%;
+    width: 40%;
     height: 100%;
     background-color: white;
     border-radius: 20px;
@@ -780,7 +834,7 @@
     align-items: center;
   }
   .center_t2{
-    width: 68%;
+    width:58%;
     height: 100%;
     background-color: white;
     border-radius: 20px;
@@ -799,6 +853,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    z-index: 100;
   }
   .ct1_t{
     font-family: 方正粗黑宋简体;
@@ -835,7 +890,28 @@
     padding: 5px 10px;
   }
   .stock_block{
-    height: 40%;
+    height: 50%;
     width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .stock_block img{
+    width: 100%;
+    cursor: pointer;
+  }
+  .chartname{
+    width: 100%;
+    font-family: 方正粗黑宋简体;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .picSee{
+    margin-top: 0px!important;
+    width: 100%!important;
+  }
+  .picSee img{
+    width: 100%;
   }
 </style>
