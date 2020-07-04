@@ -19,6 +19,10 @@ export default {
   width: 100%;
   height: 100vh;
 }
+/*@font-face {*/
+/*  font-family: 'fangzheng'; //自定义字体名称*/
+/*  src: url('../static/font/fangzheng.ttf'); //注意引入正确位置*/
+/*}*/
 *{
   margin: 0;
   padding: 0;

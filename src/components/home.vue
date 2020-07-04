@@ -2,37 +2,47 @@
   <div class="whole">
     <div class="menu">
       <img class="logo2" src="../assets/logo2.png" alt="">
+<!--      <div>{{this.$route.params.userid}}</div>-->
       <ul class="menu_line">
-        <li :class="{active:act_menu === 0}"><i class="el-icon-house menu_icon" :class="{active_icon:act_menu === 0}"></i></li>
-        <li><i class="el-icon-folder menu_icon"></i></li>
-        <li><i class="el-icon-house menu_icon"></i></li>
-        <li><i class="el-icon-house menu_icon"></i></li>
-        <li><i class="el-icon-house menu_icon"></i></li>
+        <li :class="{active:act_menu === 0}" @click="changAct_menu(0)"><i class="el-icon-house menu_icon" :class="{active_icon:act_menu === 0}"></i></li>
+        <li :class="{active:act_menu === 1}" @click="changAct_menu(1)"><i class="el-icon-folder menu_icon" :class="{active_icon:act_menu === 1}"></i></li>
+        <li :class="{active:act_menu === 2}" @click="changAct_menu(2)"><i class="el-icon-reading menu_icon" :class="{active_icon:act_menu === 2}"></i></li>
+        <li :class="{active:act_menu === 3}" @click="changAct_menu(3)"><i class="el-icon-data-line menu_icon" :class="{active_icon:act_menu === 3}"></i></li>
+        <li :class="{active:act_menu === 4}" @click="changAct_menu(4)"><i class="el-icon-coin menu_icon" :class="{active_icon:act_menu === 4}"></i></li>
       </ul>
-    </div>n
-      <homeContent class="main"></homeContent>
+    </div>
+      <homeContent class="main" v-if="act_menu === 0"></homeContent>
+      <fund v-bind:userid="userid" class="main" v-if="act_menu === 1"></fund>
+      <news class="main" v-if="act_menu === 2"></news>
   </div>
 </template>
 
 <script>
   import homeContent from "./homeContent";
+  import news from "./news";
+  import fund from "./fund";
     export default {
         name: "home",
-        components: {homeContent},
+        components: {
+            homeContent,
+            news,
+            fund,
+        },
         data() {
             return {
                 msg: "Hello Vue.js",
                 search_mes: '',
                 act_menu: 0,
+                userid:'',
             }
         },
-        component: {
-            homeContent,
-        },
         mounted() {
+            this.userid = this.$route.params.userid;
         },
-        method: {
-
+        methods: {
+            changAct_menu(i){
+                this.act_menu = i;
+            }
         },
 
     }

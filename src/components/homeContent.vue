@@ -5,10 +5,10 @@
         <el-input placeholder="" v-model="search_mes" clearable class="search_input"></el-input>
         <el-button type="primary" icon="el-icon-search" class="search_bt"></el-button>
         <ul class="header_menu">
-          <li class="header_li" :class="{active_header:header_menu === 0}">中海石油</li>
-          <li class="header_li">中海石油</li>
-          <li class="header_li">中海石油</li>
-          <li class="header_li">中海石油</li>
+          <li class="header_li" :class="{active_header:header_menu === 0}" @click="changeFavor(0)">中海石油</li>
+          <li class="header_li" :class="{active_header:header_menu === 1}" @click="changeFavor(1)">中海石油</li>
+          <li class="header_li" :class="{active_header:header_menu === 2}" @click="changeFavor(2)">中海石油</li>
+          <li class="header_li" :class="{active_header:header_menu === 3}" @click="changeFavor(3)">中海石油</li>
         </ul>
       </div>
       <div class="home_lt">
@@ -40,7 +40,6 @@
         name: "homeContent",
         data() {
             return {
-                msg: "Hello Vue.js",
                 value: new Date(),
                 header_menu: 0,
             }
@@ -50,8 +49,10 @@
         },
         mounted() {
         },
-        method: {
-
+        methods: {
+            changeFavor(i){
+                this.header_menu = i;
+            }
         },
 
     }
@@ -143,23 +144,23 @@
   }
   .home_lt{
     width: 100%;
-    height: 46%;
+    height: 40%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
   }
   .home_lt1{
     width: 58%;
-    height: 90%;
+    height: 96%;
     /*overflow: hidden;*/
   }
   .home_lt2{
      width: 30%;
-     height: 90%;
+     height: 96%;
    }
   .home_lb{
     width: 100%;
-    height: 40%;
+    height: 48%;
     /*margin-top: 6px;*/
     display: flex;
     justify-content: center;
@@ -178,7 +179,7 @@
   }
   .home_lb_content{
     width: 92%;
-    height: 200px;
+    height: 80%;
   }
   .calendar{
     width: 90%;

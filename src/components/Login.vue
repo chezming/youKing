@@ -5,7 +5,7 @@
      <div class="input_mes">
        <h1>友&nbsp;金</h1>
        <h2>您的私人理财顾问</h2>
-       <el-input placeholder="请输入用户名" v-model="username" clearable></el-input>
+       <el-input placeholder="请输入用户名" v-model="userid" clearable></el-input>
        <el-input placeholder="请输入密码" v-model="psw" show-password></el-input>
        <div class="lg_bt"><div class="signup" @click="signup">注册</div><div class="signin" @click="check">登录</div></div>
       </div>
@@ -46,13 +46,15 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
    name: "Login",
    data () {
       return {
-          username: '',
+          userid: '',
           psw: '',
           dialogVisible: false,
+          link: 'http://localhost:8181',
           ruleForm:{
               id: '',
               sex: '',
@@ -61,9 +63,16 @@ export default {
               psw: '',
               psw2: '',
           },
+          investor:{
+              investorid: '',
+              investorsex: '',
+              investorname: '',
+              investorage: null,
+              investorpsd: '',
+          },
           rules: {
               id: [
-                  {required: true, message: '请输入账号', trigger: 'blur'},
+                  {required: true, message: '请输入id账号', trigger: 'blur'},
                   {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
               ],
               age: [
@@ -108,10 +117,44 @@ export default {
            bk.style.transform = 'translate('+(e.clientX-600)/10+'px,'+(e.clientY-300)/10+'px)';
        },
        check(){
-           this.$router.push({path:'/home'})
+           axios.get(this.link+'/inv_basis/signin/'+this.userid+'/'+this.psw).then(res =>{
+               if(res.data === ""){
+                   console.log('获取数据失败');
+                   alert('账号或密码错误!');
+               }else {
+                   alert('登录成功!');
+                   console.log(res);
+                   this.$router.push({name:'home', params: { userid: this.userid }});
+               }
+           }).catch((e) => {
+               console.log('获取数据失败');
+               alert('账号或密码错误!');
+           });
        },
        signup(){
            this.dialogVisible = true;
+       },
+       submitForm(formName){
+           this.investor.investorid = this.ruleForm.id;
+           this.investor.investorsex = this.ruleForm.sex;
+           this.investor.investorname = this.ruleForm.name;
+           this.investor.investorage = this.ruleForm.age;
+           this.investor.investorpsd = this.ruleForm.psw;
+           console.log(this.investor);
+           let _this = this;
+           this.$refs[formName].validate((valid) => {
+               if (valid) {
+                   axios.post(this.link+'/inv_basis/signup',this.investor).then(res =>{
+                       alert('注册成功!');
+                       _this.dialogVisible = false;
+                       this.$refs[formName].resetFields();
+                       console.log(res);
+                   })
+               } else {
+                   console.log('信息错误');
+                   return false;
+               }
+           });
        },
        resetForm(formName) {
            this.$refs[formName].resetFields();
@@ -120,6 +163,9 @@ export default {
            this.$refs[formName].resetFields();
            this.dialogVisible=false;
        },
+       handleClose(){
+           this.cancellForm('ruleForm');
+       }
    }
 }
 </script>
